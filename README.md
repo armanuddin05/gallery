@@ -37,11 +37,12 @@ Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/ver
 - [X] Scaffold basic ui with mock data
 - [X] Tidy up build process
 - [X] Actually set up a database (vercel postgres)
-- [ ] Attach database to UI
-- [ ] Set up auth
-- [ ] Set up tRPC
+- [X] Attach database to UI
+- [ ] Set up auth(later)
 - [ ] Add image upload
-- [ ] Error handling
+- [ ] "taint" (server-only)
+- [ ] Use Next/Image component
+- [ ] Error handling (w/ sentry)
 - [ ] Routing/image page (paralell routes)
 - [ ] Delete Button (w/ server actions)
 - [ ] Analytics (posthog)
