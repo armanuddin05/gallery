@@ -1,40 +1,44 @@
+import { SignedIn, SignedOut } from "@clerk/nextjs";
+import Image from "next/image";
 import Link from "next/link";
+import { getMyImages } from "~/server/queries";
 
-import { LatestPost } from "~/app/_components/post";
-import { auth } from "~/server/auth";
-import { db } from "~/server/db";
-import { images } from "~/server/db/schema";
-import { api, HydrateClient } from "~/trpc/server";
+export const dynamic = "force-dynamic";
 
-export const dynamic = "force-dynamic"; // Force dynamic rendering  
-
-
-
-
-export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
-  const session = await auth();
-
-  const images = await db.query.images.findMany({
-    orderBy: (model, { desc }) => [desc(model.id)],
-  });
-
-  if (session?.user) {
-    void api.post.getLatest.prefetch();
-  }
+async function Images() {
+  const images = await getMyImages();
 
   return (
-    <HydrateClient>
-      <main className="">
-        <div className="flex flex-wrap gap-4">
-          {[...images, ...images, ...images].map(( image, index ) => (
-            <div key={image.id + "-" + index} className="w-48">
-              <img src={image.url}/>
-            </div>
-          ))}
+    <div className="flex flex-wrap justify-center gap-4 p-4">
+      {images.map((image) => (
+        <div key={image.id} className="flex h-48 w-48 flex-col">
+          <Link href={`/img/${image.id}`}>
+            <Image
+              src={image.url}
+              style={{ objectFit: "contain" }}
+              width={192}
+              height={192}
+              alt={image.name}
+            />
+          </Link>
+          <div>{image.name}</div>
         </div>
-        Hello (gallery in progress)
-      </main>
-    </HydrateClient>
+      ))}
+    </div>
+  );
+}
+
+export default async function HomePage() {
+  return (
+    <main className="">
+      <SignedOut>
+        <div className="h-full w-full text-center text-2xl">
+          Please sign in above
+        </div>
+      </SignedOut>
+      <SignedIn>
+        <Images />
+      </SignedIn>
+    </main>
   );
 }
